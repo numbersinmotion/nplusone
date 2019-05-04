@@ -3,6 +3,10 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 
+struct bezierPoint {
+    ofPoint p, a;
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -22,7 +26,12 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-    ofxFloatSlider radius;
+    ofxFloatSlider thickness;
+    ofxFloatSlider timeStep;
     ofxPanel gui;
+    
+    float time;
+    
+    vector< bezierPoint > bezierPoints;
     
 };
