@@ -9,7 +9,7 @@ void ofApp::setup(){
     
     gui.setup();
     gui.add(thickness.setup("thickness", 20, 1, 50));
-    gui.add(timeStep.setup("timeStep", 0.01, 0, 0.1));
+    gui.add(timeStep.setup("timeStep", 0.1, 0, 0.5));
     
     time = 0;
     
@@ -19,7 +19,7 @@ void ofApp::setup(){
         
         tmp.p = ofPoint(ofRandom(ofGetWidth() * 0.2, ofGetWidth() * 0.8), ofRandom(ofGetHeight() * 0.2, ofGetHeight() * 0.8));
         float angle = ofRandom(2 * PI);
-        float radius = ofRandom(100, 200);
+        float radius = ofRandom(200, 300);
         tmp.a = ofPoint(radius * cos(angle), radius * sin(angle));
         
         bezierPoints.push_back(tmp);
@@ -56,8 +56,8 @@ void ofApp::draw(){
         ofPoint d = next.p;
         
         // anchor points
-        ofPoint b = a + curr.a;
-        ofPoint c = d - next.a;
+        ofPoint b = curr.p + curr.a;
+        ofPoint c = next.p - next.a;
         
         for (float j = 0; j <= 1; j += 0.01) {
             ofPoint p = ofBezierPoint(a, b, c, d, j);
@@ -87,7 +87,7 @@ void ofApp::draw(){
         }
         ofVec2f dir = prev - next;
         dir.normalize();
-        dir *= thickness;
+        dir *= thickness - 10;
         dir.rotate(90);
         
         mesh.addVertex(glm::vec3(curr.x, curr.y, 0) + glm::vec3(dir.x, dir.y, 0));
@@ -96,8 +96,12 @@ void ofApp::draw(){
         mesh.addColor(ofColor(0));
         
     }
+    mesh.addVertex(mesh.getVertices()[0]);
+    mesh.addColor(ofColor(0));
+    mesh.addVertex(mesh.getVertices()[1]);
+    mesh.addColor(ofColor(0));
     mesh.draw();
-    
+
     line.draw();
     
     gui.draw();
@@ -106,7 +110,10 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
+    bezierPoints.clear();
+    setup();
+    
 }
 
 //--------------------------------------------------------------
