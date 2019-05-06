@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxGui.h"
+#include "ofxShivaVGRenderer.h"
 
 struct bezierPoint {
     ofPoint p, a;
@@ -25,12 +25,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
-    ofxFloatSlider thickness;
-    ofxFloatSlider timeStep;
-    ofxPanel gui;
-    
-    float time;
+		
+    ofPtr<ofxShivaVGRenderer> _shivaVGRenderer;
     
     ofPolyline getBezier(bezierPoint start, bezierPoint end);
     void getNext();

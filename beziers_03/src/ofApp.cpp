@@ -1,48 +1,16 @@
 #include "ofApp.h"
 
-ofPolyline ofApp::getBezier(bezierPoint start, bezierPoint end) {
-    
-    ofPoint a = start.p;
-    ofPoint b = start.p + start.a;
-    ofPoint c = end.p - end.a;
-    ofPoint d = end.p;
-    
-    ofPolyline out;
-    for (float i = 0; i <= 1; i += 0.01) {
-        ofPoint p = ofBezierPoint(a, b, c, d, i);
-        out.addVertex(p);
-    }
-    
-    return out.getResampledBySpacing(2);
-    
-}
-
-void ofApp::getNext() {
-    
-    curr = next;
-    
-//    next.p = ofPoint(ofRandom(ofGetWidth() * 0.2, ofGetWidth() * 0.8), ofRandom(ofGetHeight() * 0.2, ofGetHeight() * 0.8));
-    next.p = curr.p + ofVec2f(ofRandom(-200, 200), ofRandom(-10, 100));
-    float angle = ofRandom(2 * PI / 4);
-    float radius = ofRandom(200, 300);
-    next.a = ofPoint(radius * cos(angle), radius * sin(angle));
-    
-    nextLine = getBezier(curr, next);
-    
-}
-
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    ofSetFrameRate(60);
+    ofSetFrameRate(60.0f);
+    ofSetCurveResolution(100);
     
-    ofBackground(254, 210, 6);
+    _shivaVGRenderer = ofPtr<ofxShivaVGRenderer>(new ofxShivaVGRenderer);
+    ofSetCurrentRenderer(_shivaVGRenderer);
     
-    gui.setup();
-    gui.add(thickness.setup("thickness", 20, 1, 50));
-    gui.add(timeStep.setup("timeStep", 0.1, 0, 0.5));
-    
-    time = 0;
+    _shivaVGRenderer->setLineJoinStyle(VG_JOIN_ROUND);
+    _shivaVGRenderer->setLineCapStyle(VG_CAP_ROUND);
     
     float angle, radius;
     
@@ -63,10 +31,42 @@ void ofApp::setup(){
     
 }
 
+ofPolyline ofApp::getBezier(bezierPoint start, bezierPoint end) {
+    
+    ofPoint a = start.p;
+    ofPoint b = start.p + start.a;
+    ofPoint c = end.p - end.a;
+    ofPoint d = end.p;
+    
+    ofPolyline out;
+    for (float i = 0; i <= 1; i += 0.01) {
+        ofPoint p = ofBezierPoint(a, b, c, d, i);
+        out.addVertex(p);
+    }
+    
+    return out.getResampledBySpacing(1);
+    
+}
+
+void ofApp::getNext() {
+    
+    curr = next;
+    
+    float angle, radius;
+    
+    angle = ofRandom(2 * PI);
+    radius = ofRandom(100, 200);
+    next.p = curr.p + ofVec2f(radius * cos(angle), radius * sin(angle));
+    angle = ofRandom(2 * PI);
+    radius = ofRandom(400, 800);
+    next.a = ofPoint(radius * cos(angle), radius * sin(angle));
+    
+    nextLine = getBezier(curr, next);
+    
+}
+
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    time += timeStep;
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
@@ -76,7 +76,7 @@ void ofApp::update(){
     
     if (nextLine.size() == 0) getNext();
     
-    if (line.size() > 2000) line.getVertices().erase(line.getVertices().begin());
+    if (line.size() > 5000) line.getVertices().erase(line.getVertices().begin());
     
     cameraPosition = 0.99 * cameraPosition + 0.01 * line.getVertices()[line.size() - 1];
 
@@ -85,22 +85,38 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+    ofBackground(254, 210, 6);
+    
     ofSetColor(0);
     
     ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-//    ofTranslate(-line.getVertices()[line.size() - 1].x, -line.getVertices()[line.size() - 1].y);
+    //    ofTranslate(-line.getVertices()[line.size() - 1].x, -line.getVertices()[line.size() - 1].y);
     ofTranslate(-cameraPosition.x, - cameraPosition.y, 0);
     
+    ofSetLineWidth(20.0f);
     line.draw();
+    
+    ofSetLineWidth(1.0f);
+    ofSetColor(255, 0, 0);
+    ofDrawCircle(curr.p, 5);
+    ofSetColor(255, 0, 50);
+    ofDrawCircle(curr.p + curr.a, 5);
+    ofSetColor(255);
+    ofDrawLine(curr.p, curr.p + curr.a);
+    ofSetColor(0, 255, 0);
+    ofDrawCircle(next.p, 5);
+    ofSetColor(0, 255, 50);
+    ofDrawCircle(next.p - next.a, 5);
+    ofSetColor(255);
+    ofDrawLine(next.p, next.p - next.a);
+    ofSetColor(255);
+    ofDrawLine(curr.p + curr.a, next.p - next.a);
     
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
-    line.clear();
-    setup();
-    
+
 }
 
 //--------------------------------------------------------------
