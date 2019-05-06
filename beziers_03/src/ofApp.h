@@ -30,11 +30,14 @@ class ofApp : public ofBaseApp{
     
     ofPolyline getBezier(bezierPoint start, bezierPoint end);
     void getNext();
+    int numPoints;
     bezierPoint curr;
     bezierPoint next;
     ofPolyline line;
     ofPolyline nextLine;
     
     ofVec2f cameraPosition;
+    
+    bool debugMode;
     
 };

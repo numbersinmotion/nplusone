@@ -6,6 +6,10 @@ void ofApp::setup(){
     ofSetFrameRate(60.0f);
     ofSetCurveResolution(100);
     
+    debugMode = false;
+    
+    numPoints = 5000;
+    
     _shivaVGRenderer = ofPtr<ofxShivaVGRenderer>(new ofxShivaVGRenderer);
     ofSetCurrentRenderer(_shivaVGRenderer);
     
@@ -26,6 +30,11 @@ void ofApp::setup(){
     
     line = getBezier(curr, next);
     getNext();
+    
+    while (line.getVertices().size() < numPoints) {
+        line.addVertices(nextLine.getVertices());
+        getNext();
+    }
     
     cameraPosition = line.getVertices()[line.size() - 1];
     
@@ -77,7 +86,7 @@ void ofApp::update(){
     
     if (nextLine.size() == 0) getNext();
     
-    if (line.size() > 5000) line.getVertices().erase(line.getVertices().begin());
+    line.getVertices().erase(line.getVertices().begin());
     
     cameraPosition = 0.99 * cameraPosition + 0.01 * line.getVertices()[line.size() - 1];
 
@@ -91,32 +100,40 @@ void ofApp::draw(){
     ofSetColor(0);
     
     ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-    //    ofTranslate(-line.getVertices()[line.size() - 1].x, -line.getVertices()[line.size() - 1].y);
     ofTranslate(-cameraPosition.x, - cameraPosition.y, 0);
     
     ofSetLineWidth(20.0f);
     line.draw();
     
-    ofSetLineWidth(1.0f);
-    ofSetColor(255, 0, 0);
-    ofDrawCircle(curr.p, 5);
-    ofSetColor(255, 0, 50);
-    ofDrawCircle(curr.p + curr.a, 5);
-    ofSetColor(255);
-    ofDrawLine(curr.p, curr.p + curr.a);
-    ofSetColor(0, 255, 0);
-    ofDrawCircle(next.p, 5);
-    ofSetColor(0, 255, 50);
-    ofDrawCircle(next.p - next.a, 5);
-    ofSetColor(255);
-    ofDrawLine(next.p, next.p - next.a);
-    ofSetColor(255);
-    ofDrawLine(curr.p + curr.a, next.p - next.a);
+    if (debugMode) {
+        ofSetLineWidth(1.0f);
+        ofSetColor(255, 0, 0);
+        ofDrawCircle(curr.p, 5);
+        ofSetColor(255, 0, 50);
+        ofDrawCircle(curr.p + curr.a, 5);
+        ofSetColor(255);
+        ofDrawLine(curr.p, curr.p + curr.a);
+        ofSetColor(0, 255, 0);
+        ofDrawCircle(next.p, 5);
+        ofSetColor(0, 255, 50);
+        ofDrawCircle(next.p - next.a, 5);
+        ofSetColor(255);
+        ofDrawLine(next.p, next.p - next.a);
+        ofSetColor(255);
+        ofDrawLine(curr.p + curr.a, next.p - next.a);
+    }
     
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+    
+    if (key == 'r' || key == 'R') {
+        line.clear();
+        setup();
+    } else if (key == ' ') {
+        debugMode = !debugMode;
+    }
 
 }
 
