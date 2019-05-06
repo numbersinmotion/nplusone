@@ -55,9 +55,10 @@ void ofApp::getNext() {
     float angle, radius;
     
     angle = ofRandom(2 * PI);
+//    angle = atan2(curr.a.y, curr.a.x);
     radius = ofRandom(100, 200);
     next.p = curr.p + ofVec2f(radius * cos(angle), radius * sin(angle));
-    angle = ofRandom(2 * PI);
+    angle = atan2(curr.a.y, curr.a.x) + PI / 2;
     radius = ofRandom(400, 800);
     next.a = ofPoint(radius * cos(angle), radius * sin(angle));
     
