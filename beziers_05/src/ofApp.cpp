@@ -7,7 +7,7 @@ void ofApp::setup(){
     
     followIndex = 0;
     
-    ofSetFrameRate(60.0f);
+    ofSetFrameRate(30.0f);
     ofSetCurveResolution(100);
     
     _shivaVGRenderer = ofPtr<ofxShivaVGRenderer>(new ofxShivaVGRenderer);
@@ -31,35 +31,41 @@ void ofApp::setupWalkers() {
     
     // trying to match cover
     BezierWalker thinWhite;
-    thinWhite.setup(ofColor(255), 1);
+    thinWhite.setup(ofColor(255), 1, 3, 50, 100);
     walkers.push_back(thinWhite);
-    thinWhite.setup(ofColor(255), 1);
+    thinWhite.setup(ofColor(255), 1, 3, 50, 100);
+    walkers.push_back(thinWhite);
+    thinWhite.setup(ofColor(255), 1, 3, 50, 100);
     walkers.push_back(thinWhite);
     BezierWalker thickWhite;
-    thickWhite.setup(ofColor(255), 50);
+    thickWhite.setup(ofColor(255), 50, 1, 300, 500);
     walkers.push_back(thickWhite);
-    thickWhite.setup(ofColor(255), 50);
+    thickWhite.setup(ofColor(255), 50, 1, 300, 500);
     walkers.push_back(thickWhite);
     BezierWalker mediumBlack;
-    mediumBlack.setup(ofColor(0), 25);
+    mediumBlack.setup(ofColor(0), 25, 2, 150, 250);
     walkers.push_back(mediumBlack);
-    mediumBlack.setup(ofColor(0), 25);
+    mediumBlack.setup(ofColor(0), 25, 2, 150, 250);
     walkers.push_back(mediumBlack);
     BezierWalker thickBlack;
-    thickBlack.setup(ofColor(0), 50);
+    thickBlack.setup(ofColor(0), 50, 1, 300, 500);
     walkers.push_back(thickBlack);
-    thickBlack.setup(ofColor(0), 50);
+    thickBlack.setup(ofColor(0), 50, 1, 300, 500);
+    walkers.push_back(thickBlack);
+    thickBlack.setup(ofColor(0), 50, 1, 300, 500);
+    walkers.push_back(thickBlack);
+    thickBlack.setup(ofColor(0), 50, 1, 300, 500);
     walkers.push_back(thickBlack);
     
     // follow avg position
-    //    cameraPosition = ofVec2f(0, 0);
-    //    for (int i = 0; i < walkers.size(); i++) {
-    //        cameraPosition += walkers[i].line.getVertices()[walkers[i].line.size() - 1];
-    //    }
-    //    cameraPosition /= walkers.size();
+        cameraPosition = ofVec2f(0, 0);
+        for (int i = 0; i < walkers.size(); i++) {
+            cameraPosition += walkers[i].line.getVertices()[walkers[i].line.size() - 1];
+        }
+        cameraPosition /= walkers.size();
     
     // follow random single walker
-    cameraPosition = walkers[followIndex].line.getVertices()[walkers[followIndex].line.size() - 1];
+//    cameraPosition = walkers[followIndex].line.getVertices()[walkers[followIndex].line.size() - 1];
     
 }
 
@@ -73,16 +79,16 @@ void ofApp::update(){
     }
     
     // follow avg position
-//    ofVec2f newCameraPosition = ofVec2f(0, 0);
-//    for (int i = 0; i < walkers.size(); i++) {
-//        newCameraPosition += walkers[i].line.getVertices()[walkers[i].line.size() - 1];
-//    }
-//    newCameraPosition /= walkers.size();
-//    cameraPosition = 0.99 * cameraPosition + 0.01 * newCameraPosition;
+    ofVec2f newCameraPosition = ofVec2f(0, 0);
+    for (int i = 0; i < walkers.size(); i++) {
+        newCameraPosition += walkers[i].line.getVertices()[walkers[i].line.size() - 1];
+    }
+    newCameraPosition /= walkers.size();
+    cameraPosition = 0.99 * cameraPosition + 0.01 * newCameraPosition;
     
     // follow random single walker
-    if ((ofGetFrameNum() + 1) % 400 == 0) followIndex = floor(ofRandom(walkers.size()));
-    cameraPosition = 0.99 * cameraPosition + 0.01 * walkers[followIndex].line.getVertices()[walkers[followIndex].line.size() - 1];
+//    if ((ofGetFrameNum() + 1) % 400 == 0) followIndex = floor(ofRandom(walkers.size()));
+//    cameraPosition = 0.99 * cameraPosition + 0.01 * walkers[followIndex].line.getVertices()[walkers[followIndex].line.size() - 1];
 
 }
 
